@@ -1,0 +1,128 @@
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<hr>
+<a (click)="onOpenModal(null)" class="table-link text-warning">
+    <span class="fa-stack">
+        <i class="fa fa-square fa-stack-2x"></i>
+        <i class="fa fa-plus-square  fa-stack-1x fa-inverse"></i>
+    </span>                                                
+</a>
+
+<div class="container bootstrap snippets bootdey">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+                <div class="table-responsive">
+                    <table class="table user-list">
+                        <thead>
+                            <tr>
+                            <th><span>Id</span></th>
+                            <th><span>Nome</span></th>
+                            <th><span>Preço</span></th>
+                            <th><span>Data</span></th>
+                            <th><span>Operações</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let produto of listProduto ">                            
+                                <td>
+                                    {{produto.id}}
+                                </td>
+                                <td>
+                                    {{produto.nome}}
+                                </td>
+                                <td>
+                                    {{produto.preco}}
+                                </td>
+                                <td>
+                                    {{produto.validade| date : "dd/MM/yyyy"}}
+                                </td>
+                                <td>
+                                    <a href="#" (click)="onOpenModal(produto)" class="table-link text-warning">
+                                        <span class="fa-stack">
+                                            <i class="fa fa-square fa-stack-2x"></i>
+                                            <i class="fa fa-pencil-square  fa-stack-1x fa-inverse"></i>
+                                        </span>                                                
+                                    </a>
+                                    <a href="#" (click)="excluirProduto(produto.id)" class="table-link text-warning">
+                                        <span class="fa-stack">
+                                            <i class="fa fa-times-circle fa-stack-2x"></i>
+                                        </span>                                            
+                                    </a>
+                                </td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="text-right">
+        <ul class="pagination">
+            <li><a href="#" (click)="carregaUrl(primeiraPagina)"><i class="fa fa-reply"></i></a></li>
+            <li><a href="#" (click)="carregaUrl(anteriorPagina)"><i class="fa fa-caret-square-o-left"></i></a></li>
+            <li *ngFor="let _ of [].constructor(totalPaginas); let i = index">
+                <a href="#" (click)="recarregaListagem(i+1)"  [ngClass]="{'active': filtroPaginacao.pageNumber === i+1}" class="table-link text-warning">
+                    {{i+1}}
+                </a>
+            </li>
+            <li><a href="#" (click)="carregaUrl(proximaPagina)"><i class="fa fa-caret-square-o-right"></i></a></li>
+            <li><a href="#" (click)="carregaUrl(ultimaPagina)"><i class="fa fa-share"></i></a></li>
+        </ul>
+    </div>
+</div>
+
+
+<!--<button type="button" class="btn btn-primary" (click)="openModal(template)">Create template modal</button>
+ 
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This is a modal.
+  </div>
+</ng-template>
+-->
+
+<ng-template [ngIf]="modalVisivel">   
+    <div class="modal-header">
+        <legend>{{tipoAcao}}</legend>
+    </div>    
+    <div class="modal-body">
+        <div class="col col-md-8">
+            <form [formGroup]="formulario" (ngSubmit)="acao()">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="nome"
+                    formControlName="nome"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label for="preco" class="form-label">Preço</label>
+                    <input
+                    type="number"
+                    class="form-control"
+                    id="preco"
+                    formControlName="preco"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label for="validade" class="form-label">Validade</label>
+                    <input
+                    type="date"
+                    class="form-control"
+                    id="validade"
+                    formControlName="validade"
+                    />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</ng-template> 

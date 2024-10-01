@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { URL_BASE } from '../global_vars';
 import { CONTENT_TYPE } from '../global_vars';
 import { FormProduto } from '../classes/FormProduto';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -23,6 +24,34 @@ export class ProdutoService {
         this.options = {headers: new HttpHeaders().set('Content-Type', CONTENT_TYPE), responseType: 'text'};
     }
 
+    private transformResponse(response: any): RespostaPaginada<Produto[]> {
+        let data = response.data?response.data:response.content;
+        let pageNumber = response.pageNumber?response.pageNumber:response.current_page;
+        let first_page = response.first_page;
+        let last_page = response.last_page;
+        let totalPages = response.totalPages;
+        let totalRecords = response.totalRecords? response.totalRecords:response.totalElements
+        
+        let pageable = response.pageable;
+        let pageSize;
+        if (pageable) {
+            pageSize = pageable.pageSize;
+        } else {
+            pageSize = response.pageSize;
+        }        
+        return new RespostaPaginada<Produto[]>(
+          data,
+          response.current_page, 
+          pageSize, 
+          first_page, 
+          last_page, 
+          totalPages, 
+          totalRecords, 
+          response.next_page, 
+          response.previous_page 
+        );
+      }
+
     public salvarProduto(formProduto:FormProduto) :Observable<Resposta<Produto>>{ 
         return this.http.post<Resposta<Produto>>(this._userUrl+"/salvarProduto", JSON.stringify(formProduto), this.options);
     }
@@ -37,8 +66,8 @@ export class ProdutoService {
             url+=new FiltroPaginacao().toString();
         } else {
             url+=filtroPaginacao.toString();
-        }        
-        return this.http.get<RespostaPaginada<Produto[]>>(url);            
+        }    
+        return this.http.get<RespostaPaginada<Produto[]>>(url).pipe(map(response => this.transformResponse(response)));            
     }
 
     public getPaginado(url:string) :Observable<RespostaPaginada<Produto[]>> {        

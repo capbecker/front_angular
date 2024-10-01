@@ -53,12 +53,22 @@ export class ProdutoListComponent implements OnInit {
 
   recarregaListagem(pageNumber?: number) {    
     if (pageNumber!=undefined && pageNumber != null) 
-      this.filtroPaginacao.pageNumber = pageNumber;
+      this.filtroPaginacao.pageNumber = pageNumber;    
     this.produtoService.buscarProdutos(this.filtroPaginacao).subscribe
     ({
       next: (response: RespostaPaginada<Produto[]>) => 
-        {
+        {          
           this.listProduto = response.data==null?[]:response.data;
+          let tudo = "Data " + response.data +
+            "\npageNumber: "+response.pageNumber+
+            "\npageSize: "+response.pageSize+
+            "\ntotalPaginas: " + response.totalPages +
+            "\ntotalRegistros: " + response.totalRecords +
+            "\nproximaPagina: " + response.nextPage +
+            "\nanteriorPagina: " + response.previousPage +
+            "\nprimeiraPagina: " + response.firstPage +
+            "\nultimaPagina: " +  response.lastPage;
+          alert(tudo);  
           this.filtroPaginacao = new FiltroPaginacao(response.pageNumber, response.pageSize);
           this.totalPaginas = response.totalPages;
           this.totalRegistros = response.totalRecords;
@@ -68,7 +78,16 @@ export class ProdutoListComponent implements OnInit {
           this.ultimaPagina =  response.lastPage;
         },
       error: (error: HttpErrorResponse) => 
-        {alert(error.message);}
+        //{alert(error.message);}
+        {const errorMessage = `
+          Status: ${error.status}
+          Status Text: ${error.statusText}
+          Message: ${error.message}
+          URL: ${error.url}
+          Error: ${error.error ? JSON.stringify(error.error) : 'N/A'}
+        `;
+        
+        alert(errorMessage);}
     });
     this.modalVisivel = false;
   }
@@ -76,7 +95,7 @@ export class ProdutoListComponent implements OnInit {
   carregaUrl(url: string|null) {
     if (url == null) {
       return;
-    }
+    }    
     this.produtoService.getPaginado(url).subscribe
     ({
       next: (response: RespostaPaginada<Produto[]>) => 
@@ -95,7 +114,7 @@ export class ProdutoListComponent implements OnInit {
     });
     this.modalVisivel = false;
   }
-  onOpenModal(produto : Produto|null) {    
+  onOpenModal(produto : Produto|null) {   
     this.modalVisivel = false;
     if (produto == null) {
       this.baseProduto = new Produto(0);
@@ -125,7 +144,8 @@ export class ProdutoListComponent implements OnInit {
         error: (error: HttpErrorResponse) => 
         {
           console.log(error.message);
-          alert("Erro ao salvar");
+          //alert("Erro ao salvar");
+          alert(error.message);
           this.recarregaListagem();
         }
       });

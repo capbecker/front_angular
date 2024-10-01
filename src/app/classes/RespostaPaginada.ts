@@ -2,6 +2,7 @@ import { Resposta } from "./Resposta";
 //Objeto destinado para receber a paginacao vinda do backend (alternativa no caso de uma demanada alta)
 export class RespostaPaginada<T> extends Resposta<T>{
     constructor (
+        data: T | null = null,
         private _pageNumber: number|undefined=1,
         private _pageSize: number|undefined=10,
         private _firstPage: string|null=null,
@@ -11,7 +12,8 @@ export class RespostaPaginada<T> extends Resposta<T>{
         private _nextPage: string|null=null,
         private _previousPage: string|null=null
     ) {
-        super();
+        //super();
+        super(data);
     }
     public set pageNumber(value:number|undefined) {this._pageNumber = value};
     public get pageNumber() {return this._pageNumber;};
